@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import 'cache.dart';
 
 class Settings {
   static final Settings _instance = Settings._internal();
@@ -12,6 +13,12 @@ class Settings {
   }
 
   Settings._internal();
+
+  static CacheProvider _cacheProvider; 
+  
+  static void init(CacheProvider cacheProvider){
+   _cacheProvider = cacheProvider;
+  }
 
   //
 
@@ -152,21 +159,19 @@ class Settings {
   //
 
   Future<int> getInt(String key, int defaultValue) async {
-    return (await SharedPreferences.getInstance()).getInt(key) ?? defaultValue;
+    return await _cacheProvider.getInt(key) ?? defaultValue;
   }
 
   Future<String> getString(String key, String defaultValue) async {
-    return (await SharedPreferences.getInstance()).getString(key) ??
-        defaultValue;
+    return await _cacheProvider.getString(key) ?? defaultValue;
   }
 
   Future<double> getDouble(String key, double defaultValue) async {
-    return (await SharedPreferences.getInstance()).getDouble(key) ??
-        defaultValue;
+    return await _cacheProvider.getDouble(key) ?? defaultValue;
   }
 
   Future<bool> getBool(String key, bool defaultValue) async {
-    return (await SharedPreferences.getInstance()).getBool(key) ?? defaultValue;
+    return await _cacheProvider.getBool(key) ?? defaultValue;
   }
 
   void pingString(String key, String defaultValue) async {
@@ -182,18 +187,17 @@ class Settings {
   }
 
   void save(String key, dynamic value) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     if (value is int) {
-      await sharedPreferences.setInt(key, value);
+      await _cacheProvider.setInt(key, value);
       _intChanged(key, value);
     } else if (value is String) {
-      await sharedPreferences.setString(key, value);
+      await _cacheProvider.setString(key, value);
       _stringChanged(key, value);
     } else if (value is double) {
-      await sharedPreferences.setDouble(key, value);
+      await _cacheProvider.setDouble(key, value);
       _doubleChanged(key, value);
     } else if (value is bool) {
-      await sharedPreferences.setBool(key, value);
+      await _cacheProvider.setBool(key, value);
       _boolChanged(key, value);
     }
   }
