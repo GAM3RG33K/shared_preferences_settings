@@ -9,15 +9,19 @@ class Settings {
   static final Settings _instance = Settings._internal();
 
   factory Settings() {
+    assert(
+        _cacheProvider != null,
+        'Must call Settings.init(cacheProvider)'
+        ' before using settings!');
     return _instance;
   }
 
   Settings._internal();
 
-  static CacheProvider _cacheProvider; 
-  
-  static void init(CacheProvider cacheProvider){
-   _cacheProvider = cacheProvider;
+  static CacheProvider _cacheProvider;
+
+  static void init(CacheProvider cacheProvider) {
+    _cacheProvider = cacheProvider;
   }
 
   //
@@ -26,6 +30,7 @@ class Settings {
       Map<String, _SettingStream<int>>();
 
   _SettingStream _getIntStreamOf(String settingKey) {
+    print('settingsKey: $settingKey int streams: $_intStreams');
     if (_intStreams.containsKey(settingKey)) {
       return _intStreams[settingKey];
     }
@@ -60,6 +65,7 @@ class Settings {
       Map<String, _SettingStream<bool>>();
 
   _SettingStream _getBoolStreamOf(String settingKey) {
+    print('settingsKey: $settingKey bool streams: $_boolStreams');
     if (_boolStreams.containsKey(settingKey)) {
       return _boolStreams[settingKey];
     }
@@ -94,6 +100,7 @@ class Settings {
       Map<String, _SettingStream<String>>();
 
   _SettingStream _getStringStreamOf(String settingKey) {
+    print('settingsKey: $settingKey string streams: $_stringStreams');
     if (_stringStreams.containsKey(settingKey)) {
       return _stringStreams[settingKey];
     }
@@ -128,6 +135,7 @@ class Settings {
       Map<String, _SettingStream<double>>();
 
   _SettingStream _getDoubleStreamOf(String settingKey) {
+    print('settingsKey: $settingKey double streams: $_doubleStreams');
     if (_doubleStreams.containsKey(settingKey)) {
       return _doubleStreams[settingKey];
     }
@@ -159,31 +167,34 @@ class Settings {
   //
 
   Future<int> getInt(String key, int defaultValue) async {
-    return await _cacheProvider.getInt(key) ?? defaultValue;
+    return _cacheProvider.getInt(key) as int ?? defaultValue;
   }
 
   Future<String> getString(String key, String defaultValue) async {
-    return await _cacheProvider.getString(key) ?? defaultValue;
+    return _cacheProvider.getString(key) as String ?? defaultValue;
   }
 
   Future<double> getDouble(String key, double defaultValue) async {
-    return await _cacheProvider.getDouble(key) ?? defaultValue;
+    return _cacheProvider.getDouble(key) as double ?? defaultValue;
   }
 
   Future<bool> getBool(String key, bool defaultValue) async {
-    return await _cacheProvider.getBool(key) ?? defaultValue;
+    return _cacheProvider.getBool(key) as bool ?? defaultValue;
   }
 
   void pingString(String key, String defaultValue) async {
-    _stringChanged(key, await getString(key, defaultValue));
+    final String value = await getString(key, defaultValue);
+    _stringChanged(key, value);
   }
 
   void pingDouble(String key, double defaultValue) async {
-    _doubleChanged(key, await getDouble(key, defaultValue));
+    final double value = await getDouble(key, defaultValue);
+    _doubleChanged(key, value);
   }
 
   void pingBool(String key, bool defaultValue) async {
-    _boolChanged(key, await getBool(key, defaultValue));
+    final bool value = await getBool(key, defaultValue);
+    _boolChanged(key, value);
   }
 
   void save(String key, dynamic value) async {
@@ -200,6 +211,15 @@ class Settings {
       await _cacheProvider.setBool(key, value);
       _boolChanged(key, value);
     }
+  }
+
+  bool containsKey(String key) {
+    final status = _cacheProvider.containsKey(key);
+    return status;
+  }
+
+  Object getValue(String settingsKey) {
+    return _cacheProvider.getValue(settingsKey);
   }
 }
 

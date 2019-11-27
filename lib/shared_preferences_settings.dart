@@ -11,8 +11,9 @@
  * All rights reserved.
  * See LICENSE for distribution and usage details.
  */
- 
+
 library shared_preferences_settings;
 
+export 'src/cache.dart';
 export 'src/settings.dart';
 export 'src/settings_screen.dart';

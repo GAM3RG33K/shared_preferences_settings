@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
@@ -6,6 +7,17 @@ import 'package:flutter_colorpicker/block_picker.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 import 'settings.dart';
+
+T getDefaultValue<T>(String settingsKey, T defaultValue) {
+  final Settings settings = Settings();
+  if (settings.containsKey(settingsKey)) {
+    final storedValue = settings.getValue(settingsKey);
+    if (storedValue is T) {
+      return storedValue;
+    }
+  }
+  return defaultValue;
+}
 
 /// [SettingsScreen] is a simple Screen widget that may contain Tiles or other
 /// widgets.
@@ -206,7 +218,7 @@ class SettingsToggleScreen extends StatelessWidget {
         settingKey: settingKey,
         title:
             value == false && subtitleIfOff != null ? subtitleIfOff : subtitle,
-        defaultValue: defaultValue,
+        defaultValue: getDefaultValue<bool>(settingKey, defaultValue),
         confirmText: confirmText,
         confirmTextToEnable: confirmTextToEnable,
         confirmTextToDisable: confirmTextToDisable,
@@ -759,7 +771,8 @@ class _CheckboxSettingsTileState extends State<CheckboxSettingsTile>
       childBuilder: (BuildContext context, bool enabled) {
         return Settings().onBoolChanged(
           settingKey: widget.settingKey,
-          defaultValue: widget.defaultValue,
+          defaultValue:
+              getDefaultValue<bool>(widget.settingKey, widget.defaultValue),
           childBuilder: (BuildContext context, bool value) {
             return _SettingsTile(
               title: widget.title,
@@ -964,7 +977,8 @@ class _SwitchSettingsTileState extends State<SwitchSettingsTile>
       childBuilder: (BuildContext context, bool enabled) {
         return Settings().onBoolChanged(
           settingKey: widget.settingKey,
-          defaultValue: widget.defaultValue,
+          defaultValue:
+              getDefaultValue<bool>(widget.settingKey, widget.defaultValue),
           childBuilder: (BuildContext context, bool value) {
             return _SettingsTile(
               title: widget.title,
@@ -1139,7 +1153,7 @@ class _RadioSettingsTileState extends State<RadioSettingsTile>
       childBuilder: (BuildContext context, bool enabled) {
         return Settings().onStringChanged(
           settingKey: widget.settingKey,
-          defaultValue: selectedKey,
+          defaultValue: getDefaultValue<String>(widget.settingKey, selectedKey),
           childBuilder: (BuildContext context, String value) {
             _change(value);
             List<Widget> elements = List<Widget>();
@@ -1375,7 +1389,7 @@ class _SliderSettingsTileState extends State<SliderSettingsTile>
       childBuilder: (BuildContext context, bool enabled) {
         return Settings().onDoubleChanged(
           settingKey: widget.settingKey,
-          defaultValue: value,
+          defaultValue: getDefaultValue<double>(widget.settingKey, value),
           childBuilder: (BuildContext context, double value) {
             return _SettingsTile(
               title: widget.title,
@@ -1507,7 +1521,8 @@ class __ModalSettingsTileState extends State<_ModalSettingsTile>
       childBuilder: (BuildContext context, bool enabled) {
         return Settings().onStringChanged(
           settingKey: widget.settingKey,
-          defaultValue: widget.defaultValue,
+          defaultValue:
+              getDefaultValue<String>(widget.settingKey, widget.defaultValue),
           childBuilder: (BuildContext context, String value) {
             return _SettingsTile(
               title: widget.title,
@@ -1530,12 +1545,13 @@ class __ModalSettingsTileState extends State<_ModalSettingsTile>
   }
 
   String _getSubtitle(String value) {
-    return widget.valueToTitle(value) != null ?
-        widget.subtitle ??
-        (!widget.obfuscateSubtitle ?
-          widget.valueToTitle(value)
-          : value.length > 0? widget.valueToTitle('●' * value.length)
-          : "Not Set")
+    return widget.valueToTitle(value) != null
+        ? widget.subtitle ??
+            (!widget.obfuscateSubtitle
+                ? widget.valueToTitle(value)
+                : value.length > 0
+                    ? widget.valueToTitle('●' * value.length)
+                    : "Not Set")
         : null;
   }
 
@@ -1729,7 +1745,7 @@ class RadioPickerSettingsTile extends StatelessWidget {
       title: title,
       subtitle: subtitle,
       icon: icon,
-      defaultValue: defaultKey,
+      defaultValue: getDefaultValue<String>(settingKey, defaultKey),
       valueToTitle: (String key) => values[key],
       visibleIfKey: visibleIfKey,
       enabledIfKey: enabledIfKey,
@@ -1848,7 +1864,7 @@ class TextFieldModalSettingsTile extends StatelessWidget {
       subtitle: subtitle,
       obfuscateSubtitle: obscureText,
       icon: icon,
-      defaultValue: defaultValue,
+      defaultValue: getDefaultValue<String>(settingKey, defaultvalue),
       valueToTitle: (String key) => key,
       refreshStateOnChange: false,
       visibleIfKey: visibleIfKey,
@@ -1948,7 +1964,7 @@ class _ColorPickerSettingsTile extends StatelessWidget with _ColorWidget {
           subtitle: subtitle,
           icon: icon,
           leading: leading,
-          defaultValue: defaultValue,
+          defaultValue: getDefaultValue<String>(settingKey, defaultValue),
           visibleIfKey: visibleIfKey,
           enabledIfKey: enabledIfKey,
           visibleByDefault: visibleByDefault,
@@ -2065,7 +2081,7 @@ class SimpleColorPickerSettingsTile extends StatelessWidget with _ColorWidget {
           settingKey: settingKey,
           title: title,
           subtitle: subtitle,
-          defaultValue: value,
+          defaultValue: getDefaultValue<String>(settingKey, value),
           icon: icon,
           visibleIfKey: visibleIfKey,
           enabledIfKey: enabledIfKey,
@@ -2190,7 +2206,7 @@ class MaterialColorPickerSettingsTile extends StatelessWidget
           settingKey: settingKey,
           title: title,
           subtitle: subtitle,
-          defaultValue: value,
+          defaultValue: getDefaultValue<String>(settingKey, value),
           icon: icon,
           visibleIfKey: visibleIfKey,
           enabledIfKey: enabledIfKey,

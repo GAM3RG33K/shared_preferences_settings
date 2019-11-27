@@ -13,9 +13,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # library for RxDart functions
+  rxdart: ^0.22.6
+  # library for showing a color picker
+  flutter_colorpicker: ^0.2.6
 
-  rxdart: ^0.20.0
-  flutter_colorpicker: ^0.2.1
+  #library to access storage directories
+  path_provider: ^1.4.4
 
 dev_dependencies:
   flutter_test:

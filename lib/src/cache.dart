@@ -1,20 +1,34 @@
 import 'dart:async';
 
-abstract class CacheProvider{
-  Future<int> getInt(String key);
+abstract class CacheProvider {
+  CacheProvider() {
+    init();
+  }
+  void init();
 
-  Future<String> getString(String key);
+  int getInt(String key);
 
-  Future<double> getDouble(String key);
+  String getString(String key);
 
-  Future<bool> getBool(String key);
+  double getDouble(String key);
 
-  Future<void> setInt(String key, int value);
+  bool getBool(String key);
 
-  Future<void> setString(String key, String value);
+  void setInt(String key, int value);
 
-  Future<void> setDouble(String key, double value);
+  void setString(String key, String value);
 
-  Future<void> setBool(String key, bool value);
-  
+  void setDouble(String key, double value);
+
+  void setBool(String key, bool value);
+
+  bool containsKey(String key);
+
+  Set<E> getKeys<E>();
+
+  void remove(String key);
+
+  void removeAll();
+
+  Object getValue(String settingsKey);
 }
